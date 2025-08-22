@@ -1,0 +1,16 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      - id: check-ast
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        # Avoid blocking when adding binary assets like PDFs/notebooks
+        exclude: \.(pdf|png|jpg|jpeg|gif|zip|gz|bz2|xz|7z|ipynb)$
+        args: ["--maxkb=4096"]
+
