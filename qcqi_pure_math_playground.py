@@ -212,7 +212,7 @@ def trace_distance(rho: np.ndarray, sigma: np.ndarray) -> float:
 # ======================================
 
 def choi_from_kraus(kraus_ops):
-    """Choi J(E) = sum_i (K_i \otimes I) |Phi><Phi| (K_i^\dagger \otimes I), |Phi>=sum_j |jj>/sqrt(d)."""
+    r"""Choi J(E) = sum_i (K_i \otimes I) |Phi><Phi| (K_i^\dagger \otimes I), |Phi>=sum_j |jj>/\sqrt(d)."""
     d = kraus_ops[0].shape[0]
     phi = np.zeros((d * d, 1), dtype=complex)
     for j in range(d):
@@ -245,6 +245,20 @@ def dephasing_kraus(p: float):
 
 def dephase_rho(rho: np.ndarray, p: float) -> np.ndarray:
     Ks = dephasing_kraus(p)
+    out = np.zeros_like(rho, dtype=complex)
+    for K in Ks:
+        out += K @ rho @ np.conjugate(K.T)
+    return out
+
+
+def amplitude_damping_kraus(gamma: float):
+    K0 = np.array([[1, 0], [0, np.sqrt(1 - gamma)]], dtype=complex)
+    K1 = np.array([[0, np.sqrt(gamma)], [0, 0]], dtype=complex)
+    return [K0, K1]
+
+
+def amplitude_damp_rho(rho: np.ndarray, gamma: float) -> np.ndarray:
+    Ks = amplitude_damping_kraus(gamma)
     out = np.zeros_like(rho, dtype=complex)
     for K in Ks:
         out += K @ rho @ np.conjugate(K.T)
@@ -362,3 +376,12 @@ if __name__ == "__main__":
         out = partial_trace(rho232, keep=ks, dims=dims_232)
         ok_shape = (out.shape == expected)
         print(f"[{'PASS' if ok_shape else 'FAIL'}] shape keep={ks}: got {out.shape}, expected {expected}")
+
+    # 8) Amplitude damping-demo op |1>
+    ok, tp, cp, evals = is_cptp(amplitude_damping_kraus(0.25))
+    print("Amplitude damping CPTP:", ok, " (TP:", tp, ", CP:", cp, ") eigenwaarden Choi:", evals)
+    rho1 = to_density(ket1)
+    for g in (0.0, 0.3, 0.7, 1.0):
+        rout = amplitude_damp_rho(rho1, g)
+        vec = bloch_vector_from_rho(rout)
+        print(f"gamma={g}  Bloch: {vec}")
