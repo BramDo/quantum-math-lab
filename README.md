@@ -35,6 +35,33 @@ python quant_math_lab.py
 python qcqi_pure_math_playground.py
 ```
 
+Or use the minimal CLI app:
+```
+python quantum_app.py self-tests      # run quant_math_lab self-tests
+python quantum_app.py playground      # run qcqi playground demos
+python quantum_app.py notebook notebooks/SomeNotebook.ipynb
+```
+Running without a subcommand opens an interactive menu.
+
+## Web App
+
+A tiny stdlib WSGI web app (no extra deps) lives under `quantumapp/`.
+
+Start the server and open in your browser:
+```
+python -m quantumapp.server --host 127.0.0.1 --port 8000
+# or: python quantumapp/server.py
+```
+
+Features (via the UI):
+- Run `quant_math_lab` self-tests and show output
+- Run `qcqi_pure_math_playground.py` demos
+- Compute CHSH for Bell states (optional custom angles)
+- Run QPE with parameters (`theta`, `m`)
+- Execute a local `.ipynb` by path (runs cells sequentially; NumPy-only)
+
+Security note: the notebook runner only accepts paths under the repo root and with `.ipynb` extension.
+
 Expected outputs include (indicative):
 - CHSH for `|phi+>` ≈ `2*sqrt(2)`.
 - QPE demo returns a bitstring `y` with `y/2^m` close to the true phase.
@@ -47,4 +74,3 @@ Expected outputs include (indicative):
 ## Troubleshooting
 - If NumPy is missing or too old, reinstall via `pip install -r requirements.txt`.
 - For complex number display issues in some terminals, ensure `repr`/printing isn’t truncated by your environment.
-
