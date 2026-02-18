@@ -35,6 +35,19 @@ python quant_math_lab.py
 python qcqi_pure_math_playground.py
 ```
 
+Bell-state simulation + hardware run via qcapi/runtime:
+```
+# Ubuntu / WSL
+source ~/.venvs/qiskit/bin/activate
+python bell_qcapi_runner.py --mode both --shots 1024
+
+# Optional: pick a backend explicitly
+python bell_qcapi_runner.py --mode hardware --backend ibm_torino --shots 2048
+```
+Notes:
+- This path uses Qiskit + `qiskit-ibm-runtime` in your qiskit venv.
+- For hardware access, use a saved IBM account or set `QCAPI_TOKEN` / `QISKIT_IBM_TOKEN`.
+
 Or use the minimal CLI app:
 ```
 python quantum_app.py self-tests      # run quant_math_lab self-tests
